@@ -1,3 +1,4 @@
+#!/usr/bin/env sh
 git config merge.mediawikireleasenotes.name "MediaWiki release notes merge driver"
 cat <<EOT > $(git rev-parse --git-dir)/mediawikireleasenotes.rb
 #!/usr/bin/env ruby
