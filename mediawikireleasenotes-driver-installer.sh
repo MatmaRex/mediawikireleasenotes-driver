@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-git config merge.mediawikireleasenotes.name "MediaWiki release notes merge driver"
+
 cat <<EOT > $(git rev-parse --git-dir)/mediawikireleasenotes.rb
 #!/usr/bin/env ruby
 
@@ -13,7 +13,6 @@ added_right, removed_right = right_ary-parent_ary, parent_ary-right_ary
 # it's okay if matches overlap, as recursive will handle it as well
 matching_start = left_ary.zip(right_ary).take_while{|a,b| a == b }.length
 matching_end = left_ary.reverse.zip(right_ary.reverse).take_while{|a,b| a == b }.length
-
 
 # use union if we have consecutive additions only in both files.
 # otherwise fall back to recursive.
@@ -31,10 +30,9 @@ else
 	ok = system *%W[git merge-file #{left} #{parent} #{right}]
 	exit(ok ? 0 : -1)
 end
-
 EOT
 
+git config merge.mediawikireleasenotes.name "MediaWiki release notes merge driver"
 git config merge.mediawikireleasenotes.driver 'ruby $(git rev-parse --git-dir)/mediawikireleasenotes.rb %O %A %B'
-
 
 echo /RELEASE-NOTES* merge=mediawikireleasenotes >> $(git rev-parse --git-dir)/info/attributes
