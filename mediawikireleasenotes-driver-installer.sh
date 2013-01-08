@@ -2,8 +2,6 @@ git config merge.mediawikireleasenotes.name "MediaWiki release notes merge drive
 cat <<EOT > $(git rev-parse --git-dir)/mediawikireleasenotes.rb
 #!/usr/bin/env ruby
 
-puts 'magic'
-
 parent, left, right = *ARGV
 
 parent_ary, left_ary, right_ary = File.readlines(parent), File.readlines(left), File.readlines(right)
