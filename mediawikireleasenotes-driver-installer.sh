@@ -36,4 +36,4 @@ EOT
 git config merge.mediawikireleasenotes.driver 'ruby $(git rev-parse --git-dir)/mediawikireleasenotes.rb %O %A %B'
 
 
-echo /RELEASE-NOTES* merge=mediawikireleasenotes >> .gitattributes
+echo /RELEASE-NOTES* merge=mediawikireleasenotes >> $(git rev-parse --git-dir)/info/attributes

@@ -14,8 +14,8 @@ How it works
 ------------
 
 The installer drops the driver itself into the .git directory of the repo you're in,
-configures the repo to know about it, and uses .gitattributes file to define it as
-the default driver for release notes file.
+configures the repo to know about it, and uses [gitdir]/info/attributes file to
+define it as the default driver for release notes file.
 
 The driver is a simple script that analyzes the contents of files to be merged, and
 uses the union merge algorithm if there are only consecutive additions in both files
