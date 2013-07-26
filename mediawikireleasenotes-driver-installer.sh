@@ -3,33 +3,49 @@
 cat <<EOT > $(git rev-parse --git-dir)/mediawikireleasenotes.rb
 #!/usr/bin/env ruby
 
-parent, left, right = *ARGV
+def fail info=nil
+	puts "I don't know what to doooo!"
+	puts info if info
+	exit(-1)
+end
 
+parent, left, right = *ARGV
 parent_ary, left_ary, right_ary = File.readlines(parent), File.readlines(left), File.readlines(right)
 
-added_left, removed_left = left_ary-parent_ary, parent_ary-left_ary
-added_right, removed_right = right_ary-parent_ary, parent_ary-right_ary
 
-# it's okay if matches overlap, as recursive will handle it as well
-matching_start = left_ary.zip(right_ary).take_while{|a,b| a == b }.length
-matching_end = left_ary.reverse.zip(right_ary.reverse).take_while{|a,b| a == b }.length
+# Loads chunks
+sleft = left_ary.slice_before{|e| e.start_with? '=='}.to_a
+sright = right_ary.slice_before{|e| e.start_with? '=='}.to_a
+sparent = parent_ary.slice_before{|e| e.start_with? '=='}.to_a
 
-# use union if we have consecutive additions only in both files.
-# otherwise fall back to recursive.
-
-if(
-	removed_left.empty? && removed_right.empty? &&
-	matching_start + added_left.length + matching_end == left_ary.length &&
-	matching_start + added_right.length + matching_end == right_ary.length
-)
-	# all is well
-	ok = system *%W[git merge-file --union #{left} #{parent} #{right}]
-	exit(ok ? 0 : -1)
-else
-	# stuff was removed, fall back to regular merge
-	ok = system *%W[git merge-file #{left} #{parent} #{right}]
-	exit(ok ? 0 : -1)
+if sparent.length != sleft.length || sparent.length != sright.length
+	fail "Incompatible number of sections (#{sparent.length} vs #{sleft.length} vs #{sright.length})."
 end
+
+# Strip trailing newlines
+sleft.each{|a| a.pop while a.last.strip.empty? }
+sright.each{|a| a.pop while a.last.strip.empty? }
+sparent.each{|a| a.pop while a.last.strip.empty? }
+
+# Determine what was added in the right version
+sadded = []
+sright.each_index do |i|
+	added = sright[i] - sparent[i];
+	removed = sparent[i] - sright[i];
+	unless removed.empty?
+		fail "Non-trivial change, bailing out."
+	end
+	sadded << added
+end
+
+# And append it to the left version
+sleft.each_index do |i|
+	sleft[i] += p(sadded[i])
+end
+
+# Write back to file 
+File.binwrite( left, sleft.map{|lines| lines.join('') }.join("\n") )
+exit 0
 EOT
 
 git config merge.mediawikireleasenotes.name "MediaWiki release notes merge driver"

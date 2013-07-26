@@ -22,13 +22,14 @@ The installer drops the driver itself into the .git directory of the repo you're
 configures the repo to know about it, and uses [gitdir]/info/attributes file to
 define it as the default driver for release notes file.
 
-The driver is a simple script that analyzes the contents of files to be merged, and
-uses the union merge algorithm if there are only consecutive additions in both files
-(no deletions, changes, or non-consecutive added lines). Otherwise it falls back to
-the regular recursive merge algorithm.
+The driver is a simple script that analyzes the contents of files to be merged,
+determines release notes that have been added to each section[1] of one of the
+files and transplants them to the other one.
 
 This allows for a conflictless merge in most simple cases, and doesn't break in
 complicated situations.
+
+[1] Sections are assumed to start with a MediaWiki-style ==Header==.
 
 Showcase
 --------
@@ -60,6 +61,8 @@ merge will cause a merge conflict.
 
 License
 -------
+
+Version 2.
 
 Any of:
 * GNU GPL 2 or newer
