@@ -40,7 +40,7 @@ end
 
 # And append it to the left version
 sleft.each_index do |i|
-	sleft[i] += p(sadded[i])
+	sleft[i] += sadded[i]
 end
 
 # Write back to file 
