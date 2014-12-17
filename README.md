@@ -41,15 +41,15 @@ the following commands:
     cd testrepo
     echo "Our release notes." > RELEASE-NOTES.txt
     git add RELEASE-NOTES.txt
-    git co -am "initial commit"
-    git ch -b firstbranch
+    git commit -am "initial commit"
+    git checkout -b firstbranch
     echo "* First addition to release notes." >> RELEASE-NOTES.txt
-    git co -am "commit on firstbranch"
-    git ch master
-    git ch -b secondbranch
+    git commit -am "commit on firstbranch"
+    git checkout master
+    git checkout -b secondbranch
     echo "* Another release note. Let's hope it doesn't conflict!" >> RELEASE-NOTES.txt
-    git co -am "commit on secondbranch"
-    git ch master
+    git commit -am "commit on secondbranch"
+    git checkout master
 
 Then try the following in any order, with this driver installed or missing:
 
