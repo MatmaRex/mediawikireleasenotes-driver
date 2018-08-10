@@ -27,6 +27,48 @@ sleft.each{|a| a.pop while a.last.strip.empty? }
 sright.each{|a| a.pop while a.last.strip.empty? }
 sparent.each{|a| a.pop while a.last.strip.empty? }
 
+# Group together the lines into "list items", "paragraphs" and "headers":
+# * If a line begins with '==', it is a "header" and is kept separately
+# * If a line begins with '* ', it is the start of a "list item"
+#   and all following lines that begin with '  ' are merged with it
+# * Otherwise, the line is the state of a "paragraph"
+#   and all following lines until an empty line are merged with it
+[sleft, sright, sparent].each do |sections|
+	sections.map! do |lines|
+		items = []
+		state = nil
+
+		lines.each do |line|
+			case state
+			when nil
+				items << line
+			when :listitem
+				if line =~ /^  /
+					items.last << line
+				else
+					items << line
+				end
+			when :paragraph
+				items.last << line
+			end
+
+			if state == nil
+				if line =~ /^\* /
+					state = :listitem
+				elsif line !~ /^==/
+					state = :paragraph
+				end
+			elsif state == :paragraph && line == "\n"
+				state = nil
+			elsif state == :listitem && line !~ /^  / && line !~ /^* /
+				state = nil
+			end
+		end
+
+		items
+	end
+end
+
 # Determine what was added in the right version
 sadded = []
 sright.each_index do |i|
@@ -43,7 +85,7 @@ sleft.each_index do |i|
 	sleft[i] += sadded[i]
 end
 
-# Write back to file 
+# Write back to file
 File.binwrite( left, sleft.map{|lines| lines.join('') }.join("\n") )
 exit 0
 EOT
