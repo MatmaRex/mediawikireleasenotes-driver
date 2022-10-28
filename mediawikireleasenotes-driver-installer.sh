@@ -85,6 +85,12 @@ sleft.each_index do |i|
 	sleft[i] += sadded[i]
 end
 
+# Keep the '…' markers at the end
+sleft.each do |lines|
+	found = lines.delete "* …\n"
+	lines.push "* …\n" if found
+end
+
 # Write back to file
 File.binwrite( left, sleft.map{|lines| lines.join('') }.join("\n") )
 exit 0
