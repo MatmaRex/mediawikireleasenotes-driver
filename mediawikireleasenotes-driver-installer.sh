@@ -55,7 +55,7 @@ sparent.each{|a| a.pop while a.last.strip.empty? }
 			if state == nil
 				if line =~ /^\* /
 					state = :listitem
-				elsif line !~ /^==/
+				elsif line !~ /^==/ && line != "\n"
 					state = :paragraph
 				end
 			elsif state == :paragraph && line == "\n"
