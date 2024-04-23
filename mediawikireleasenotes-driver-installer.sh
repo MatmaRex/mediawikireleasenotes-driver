@@ -82,13 +82,12 @@ end
 
 # And append it to the left version
 sleft.each_index do |i|
-	sleft[i] += sadded[i]
-end
-
-# Keep the '…' markers at the end
-sleft.each do |lines|
-	found = lines.delete "* …\n"
-	lines.push "* …\n" if found
+	unless sadded[i].empty?
+		# Keep the '…' markers at the end
+		found_marker = sleft[i].delete "* …\n"
+		sleft[i] += sadded[i]
+		sleft[i].push "* …\n" if found_marker
+	end
 end
 
 # Write back to file
